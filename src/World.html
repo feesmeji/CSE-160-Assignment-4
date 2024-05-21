@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Asng 3</title>
+  </head>
+
+  <body onload="main()">
+
+    <h1>Fernando Mejia</h1>
+
+    <p>UCSC Email: feesmeji@ucsc.edu</p>
+    
+    <p>Notes to grader at bottom of webpage.
+    </p>
+
+
+    <h2>Story: Your pet chicken ran into the maze looking for a treasure diamond block and a never before seen colorful block! Find your chicken. Hint: your chicken was munching corn while on the run, so she might have left a track of corn crumbs along the way.</h2>
+
+    <p>Game Controls: W(Move Forward), S(Move Backward), A(Move Left), D(Move Right), Q(Pan Left), E(Pan Right)</p>
+
+    <canvas id="webgl" width="400" height="400">
+    Please use a browser that supports "canvas"
+    </canvas>
+    <br><br>
+
+    <p id="numdot"> Performance will show here once you start drawing. </p>
+
+    <p>
+      Camera Angle(X):<input type="range" min="0" max="720" value="0" class="slider" id="angleSlide">
+    <p>
+      <p>
+        Camera Angle(Y):<input type="range" min="0" max="720" value="0" class="slider" id="angleSlideY">
+      <p>
+
+    <br><br>
+
+    <p>
+      Blocky Animal Controls:
+      </p>
+<!-- Yellow Slider controls the left-to-right movement of the leg (ChatGPT helped me modify this line of code) -->
+    <p>Right_Leg Slider <input type="range" min="-34.0" max="34.0" step="0.1" value="0" class="slider" id="yellowSlideRight"></p>
+
+    <p>Left_Foot Slider <input type="range" min="-90.0" max="90.0" step="0.1" value="0" class="slider" id="left_foot_Slide"></p>
+    
+  <!-- Chat gpt helped me debug my slider control for a second level joint (I originally had but got rid of and couldn't get it to work anymore when I tried implementing again). So it suggested me to add this line of code-->
+  <p>Second-level Joint Slider (Left Leg)<input type="range" min="-34" max="34" step="0.1" value="0" class="slider" id="midLegSlider"><p>
+    Main Animation: 
+    <button type="button" id="animationYellowOnButton">ON</button>
+    <button type="button" id="animationYellowOffButton">OFF</button>
+<br><br>
+    Also: Do Shift-Click for a new animation!
+
+<br><br>
+<br><br>
+<br><br>
+<br><br>
+<br><br>
+<br><br>
+<br><br>
+<br><br>
+Notes to grader: Most code based off of Professor's walkthrough videos. ChatGPT sometimes helped me debug, get unstuck with my code, and learn new stuff for my code. I made comments in my code indicating where it was used. Also recieved help from various course tutors. I sometimes referred to: https://people.ucsc.edu/~jbrowne2/asgn3/src/Camera.js in my Camera.js file to help me debug and correct my code(I mostly wrote it following the assignment instuctions).  
+
+    <script src="../lib/webgl-utils.js"></script>
+    <script src="../lib/webgl-debug.js"></script>
+    <script src="../lib/cuon-utils.js"></script>
+    <script src="../lib/cuon-matrix.js"></script>
+    <script src="../src/Circle.js"></script>
+    <script src="../src/Triangle.js"></script>
+    <script src="../src/Point.js"></script>
+    <script src="../src/Cube.js"></script>
+    <script src="../src/Pyramid.js"></script>
+    <script src="../src/Camera.js"></script>
+    <script src="../src/CenteredCube.js"></script>
+    <script src="../src/World.js"></script>
+  </body>
+</html>
