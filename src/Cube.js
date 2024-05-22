@@ -45,14 +45,14 @@ class Cube{
 
     //Right side of cube
     gl.uniform4f(u_FragColor, rgba[0]*.8, rgba[1]*.8, rgba[2]*.8, rgba[3]);
-    drawTriangle3DUVNormal([1,1,0,   1,1,1,  1,0,1], [0,0,  1,1,  1,0], [1,0,0, 1,0,0, 1,0,0]);// right side of cube triangle 1
-    drawTriangle3DUVNormal([1,0,0,   1,1,0,  1,1,1], [0,0,  0,1,  1,1], [1,0,0, 1,0,0, 1,0,0]);//right side of cube triangle 2
+    drawTriangle3DUVNormal([1,1,0,   1,1,1,  1,0,0], [0,0,  0,1,  1,1], [1,0,0, 1,0,0, 1,0,0]);// right side of cube triangle 1
+    drawTriangle3DUVNormal([1,0,0,   1,1,1,  1,0,1], [0,0,  1,1,  1,0], [1,0,0, 1,0,0, 1,0,0]);//right side of cube triangle 2
 
 
     //Left side of triangle
     gl.uniform4f(u_FragColor, rgba[0]*.7, rgba[1]*.7, rgba[2]*.7, rgba[3]);
-    drawTriangle3DUVNormal([0,0,0,   0,1,1,   0,0,1], [0,0,  1,1,  1,0], [-1,0,0, -1,0,0, -1,0,0]); //left side of cube triangle 1
-    drawTriangle3DUVNormal([0,0,0,   0,1,0,   0,1,1], [0,0,  0,1,  1,1], [-1,0,0, -1,0,0, -1,0,0]); //left side of cube triangle 2
+    drawTriangle3DUVNormal([0,1,0,   0,1,1,   0,0,0], [0,0,  0,1,  1,1], [-1,0,0, -1,0,0, -1,0,0]); //left side of cube triangle 1
+    drawTriangle3DUVNormal([0,0,0,   0,1,1,   0,0,1], [0,0,  1,1,  1,0], [-1,0,0, -1,0,0, -1,0,0]); //left side of cube triangle 2
 
 
     //Bottom of cube
