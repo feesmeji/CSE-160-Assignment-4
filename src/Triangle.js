@@ -192,7 +192,7 @@ function drawTriangle3DUVNormal(vertices, uv, normals){
   // Bind the buffer object to targets
   gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
   // Write date into the buffer object
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.DYNAMIC_DRAW);
   //gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
   gl.vertexAttribPointer(a_Normal, 3, gl.FLOAT, false, 0, 0); // second element in parenthesis is the x,y for vertices
