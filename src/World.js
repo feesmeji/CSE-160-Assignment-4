@@ -509,6 +509,8 @@ function renderAllShapes(){
   // Clear <canvas>  (rendering points)
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); 
 
+
+
 // Draw the floor
   var floor = new Cube();
   floor.color = [0.45, 0.22, 0.05, 1.0]; //chatgpt helped me determine this dirt brown color
@@ -545,6 +547,16 @@ function renderAllShapes(){
   diamond.matrix.rotate(0,1,0,0);
   diamond.matrix.scale(0.5, 0.5, 0.5);         //this one happens first! Right to left matrix multiplication
   diamond.render();  
+
+
+
+  //Draw a sphere
+  var sphere1 = new Sphere();
+  sphere1.color = [1.0,1.0,1.0,1.0];
+  sphere1.render();
+
+
+
 
   // //Draw Chicken Body (orange)
   // var body = new CenteredCube();
