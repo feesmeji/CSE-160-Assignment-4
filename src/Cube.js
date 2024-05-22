@@ -30,28 +30,41 @@ class Cube{
 // and to help me understand the implementation better.
 //It also helped me debug the 3DUV coordinates along with the drawtriangle3d coordinates, as just copying and pasting coordinates code from my original section 2 was not giving smooth color on each cube side.
     // Front face (already provided) UV
-    drawTriangle3DUV([0,0,0,    1,1,0,    1,0,0 ], [0,0,  1,1,  1,0]);
-    drawTriangle3DUV([0,0,0,    0,1,0,    1,1,0 ], [0,0,  0,1,  1,1]);
+    drawTriangle3DUVNormal([0,0,0,    1,1,0,    1,0,0 ], [0,0,  1,1,  1,0], [0,0,-1, 0,0,-1, 0,0,-1]); //3rd is normal
+    drawTriangle3DUVNormal([0,0,0,    0,1,0,    1,1,0 ], [0,0,  0,1,  1,1],  [0,0,-1, 0,0,-1, 0,0,-1]);
 
-    //Back of cube (when drawing things, webgl renders objects closer to the camera when the z coordinate is less than zero. Further away from camera if z axis is greater than zero)
-    drawTriangle3DUV( [0,0,1,  1,1,1,  1,0,1 ], [0,0,  1,1,  1,0]);
-    drawTriangle3DUV( [0,0,1,  0,1,1,  1,1,1 ], [0,0,  0,1,  1,1]);
+    //Pass color of a point to u_FragColor var
+    gl.uniform4f(u_FragColor, rgba[0]*.9, rgba[1]*.9, rgba[2]*.9, rgba[3]);
 
     //Top of cube
-    drawTriangle3DUV( [0,1,0,   0,1,1,  1,1,1], [0,0,  0,1,  1,1]);
-    drawTriangle3DUV( [0,1,0,   1,1,1,  1,1,0], [0,0,  1,1,  1,0]);
-    
-    //Bottom of cube
-    drawTriangle3DUV( [0,0,0,   0,0,1,  1,0,1], [0,0,  0,1,  1,1]);
-    drawTriangle3DUV( [0,0,0,   1,0,1,  1,0,0], [0,0,  1,1,  1,0]);
+    drawTriangle3DUVNormal( [0,1,0,   0,1,1,  1,1,1], [0,0,  0,1,  1,1], [0,1,0, 0,1,0, 0,1,0] );
+    drawTriangle3DUVNormal( [0,1,0,   1,1,1,  1,1,0], [0,0,  1,1,  1,0], [0,1,0, 0,1,0, 0,1,0] );
+   //Pass color of a point to u_FragColor var
+   gl.uniform4f(u_FragColor, rgba[0]*.8, rgba[1]*.8, rgba[2]*.8, rgba[3]);
+
 
     //Right side of cube
-    drawTriangle3DUV([1,0,0,   1,1,1,  1,0,1], [0,0,  1,1,  1,0]);// right side of cube triangle 1
-    drawTriangle3DUV([1,0,0,   1,1,0,  1,1,1], [0,0,  0,1,  1,1]);//right side of cube triangle 2
+    gl.uniform4f(u_FragColor, rgba[0]*.8, rgba[1]*.8, rgba[2]*.8, rgba[3]);
+    drawTriangle3DUVNormal([1,1,0,   1,1,1,  1,0,1], [0,0,  1,1,  1,0], [1,0,0, 1,0,0, 1,0,0]);// right side of cube triangle 1
+    drawTriangle3DUVNormal([1,0,0,   1,1,0,  1,1,1], [0,0,  0,1,  1,1], [1,0,0, 1,0,0, 1,0,0]);//right side of cube triangle 2
+
 
     //Left side of triangle
-    drawTriangle3DUV([0,0,0,   0,1,1,   0,0,1], [0,0,  1,1,  1,0]); //left side of cube triangle 1
-    drawTriangle3DUV([0,0,0,   0,1,0,   0,1,1], [0,0,  0,1,  1,1]); //left side of cube triangle 2
+    gl.uniform4f(u_FragColor, rgba[0]*.7, rgba[1]*.7, rgba[2]*.7, rgba[3]);
+    drawTriangle3DUVNormal([0,0,0,   0,1,1,   0,0,1], [0,0,  1,1,  1,0], [-1,0,0, -1,0,0, -1,0,0]); //left side of cube triangle 1
+    drawTriangle3DUVNormal([0,0,0,   0,1,0,   0,1,1], [0,0,  0,1,  1,1], [-1,0,0, -1,0,0, -1,0,0]); //left side of cube triangle 2
+
+
+    //Bottom of cube
+    gl.uniform4f(u_FragColor, rgba[0]*.6, rgba[1]*.6, rgba[2]*.6, rgba[3]);
+    drawTriangle3DUVNormal( [0,0,0,   0,0,1,  1,0,1], [0,0,  0,1,  1,1], [0,-1,0,  0,-1,0, 0,-1,0]);
+    drawTriangle3DUVNormal( [0,0,0,   1,0,1,  1,0,0], [0,0,  1,1,  1,0], [0,-1,0,  0,-1,0, 0,-1,0]);
+
+
+    //Back of cube (when drawing things, webgl renders objects closer to the camera when the z coordinate is less than zero. Further away from camera if z axis is greater than zero)
+    gl.uniform4f(u_FragColor, rgba[0]*.5, rgba[1]*.5, rgba[2]*.5, rgba[3]);
+    drawTriangle3DUVNormal( [0,0,1,  1,1,1,  1,0,1 ], [0,0,  0,1,  1,1], [0,0,1, 0,0,1, 0,0,1]);
+    drawTriangle3DUVNormal( [0,0,1,  0,1,1,  1,1,1 ], [0,0,  1,1,  1,0], [0,0,1, 0,0,1, 0,0,1]);
     
     }
 

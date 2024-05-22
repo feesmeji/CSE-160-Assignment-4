@@ -4,7 +4,9 @@ var VSHADER_SOURCE = `
   precision mediump float;
   attribute vec4 a_Position;
   attribute vec2 a_UV;
+  attribute vec3 a_Normal;
   varying vec2 v_UV;
+  varying vec3 v_Normal;
   uniform mat4 u_ModelMatrix;
   uniform mat4 u_GlobalRotateMatrix;
   uniform mat4 u_ViewMatrix;
@@ -12,6 +14,7 @@ var VSHADER_SOURCE = `
   void main() { 
     gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_GlobalRotateMatrix * u_ModelMatrix * a_Position;
     v_UV = a_UV;
+    v_Normal = a_Normal;
   }`
 //where pointsize changes the size of the squares.
 
@@ -20,12 +23,16 @@ var VSHADER_SOURCE = `
 var FSHADER_SOURCE = `
   precision mediump float;
   varying vec2 v_UV;
+  varying vec3 v_Normal;
   uniform vec4 u_FragColor;
   uniform sampler2D u_Sampler0;
   uniform sampler2D u_Sampler1;
   uniform sampler2D u_Sampler2;
   uniform int u_whichTexture;
   void main() {
+    if (u_whichTexture == -3){
+      gl_FragColor = vec4((v_Normal+1.0)/2.0, 1.0);  //use normal
+    }
     if (u_whichTexture == -2){
       gl_FragColor = u_FragColor;     //use color
     }
@@ -51,6 +58,7 @@ let canvas;
 let gl;
 let a_Position;
 let a_UV;
+let a_Normal;
 let u_FragColor;
 let u_Size;
 let u_ModelMatrix;
@@ -96,6 +104,12 @@ function connectVariablesToGLSL(){
   a_UV = gl.getAttribLocation(gl.program, 'a_UV');
   if (a_UV < 0) {
     console.log('Failed to get the storage location of a_Position');
+    return;
+  }
+
+  a_Normal = gl.getAttribLocation(gl.program, 'a_Normal');
+  if(a_Normal < 0){
+    console.log('Failed to get the storage location of a_Normal');
     return;
   }
 

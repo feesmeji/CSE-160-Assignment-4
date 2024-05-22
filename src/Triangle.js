@@ -142,3 +142,68 @@ function drawTriangle3DUV(vertices, uv) {
     gl.drawArrays(gl.TRIANGLES, 0, n); 
 
   }
+
+
+function drawTriangle3DUVNormal(vertices, uv, normals){
+
+  var n = vertices.length/3; // The number of vertices
+  
+  // Create a buffer object for positions
+  var vertexBuffer = gl.createBuffer();
+  if (!vertexBuffer) {
+    console.log('Failed to create the buffer object');
+    return -1;
+  }
+
+  // Bind the buffer object to targets
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+  // Write date into the buffer object
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
+  //gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+  gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0); // second element in parenthesis is the x,y for vertices
+
+  // Enable the assignment to a_Position variable
+  gl.enableVertexAttribArray(a_Position);
+
+  // Create a buffer for UV
+  var uvBuffer =  gl.createBuffer();
+  if(!uvBuffer){
+    console.log('Failed to create the buffer object')
+    return -1;
+  }
+
+  // Bind the buffer object to target.
+  gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
+
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uv), gl.DYNAMIC_DRAW);
+
+  gl.vertexAttribPointer(a_UV, 2, gl.FLOAT, false, 0, 0);
+
+  gl.enableVertexAttribArray(a_UV);
+
+
+  var normalBuffer = gl.createBuffer();
+  if (!normalBuffer) {
+    console.log('Failed to create the buffer object');
+    return -1;
+  }
+
+  // Bind the buffer object to targets
+  gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+  // Write date into the buffer object
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
+  //gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+  gl.vertexAttribPointer(a_Normal, 3, gl.FLOAT, false, 0, 0); // second element in parenthesis is the x,y for vertices
+
+  // Enable the assignment to a_Position variable
+  gl.enableVertexAttribArray(a_Normal);
+
+  // Draw the triangle
+  gl.drawArrays(gl.TRIANGLES, 0, n); 
+
+  g_vertexBuffer = null;
+
+
+}
