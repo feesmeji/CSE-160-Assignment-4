@@ -7,6 +7,7 @@ var VSHADER_SOURCE = `
   attribute vec3 a_Normal;
   varying vec2 v_UV;
   varying vec3 v_Normal;
+  varying vec4 v_VertPos;
   uniform mat4 u_ModelMatrix;
   uniform mat4 u_GlobalRotateMatrix;
   uniform mat4 u_ViewMatrix;
@@ -15,6 +16,7 @@ var VSHADER_SOURCE = `
     gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_GlobalRotateMatrix * u_ModelMatrix * a_Position;
     v_UV = a_UV;
     v_Normal = a_Normal;
+    v_VertPos = u_ModelMatrix * a_Position;
   }`
 //where pointsize changes the size of the squares.
 
@@ -29,6 +31,8 @@ var FSHADER_SOURCE = `
   uniform sampler2D u_Sampler1;
   uniform sampler2D u_Sampler2;
   uniform int u_whichTexture;
+  uniform vec3 u_lightPos;
+  varying vec4 v_VertPos;
   void main() {
     if (u_whichTexture == -3){
       gl_FragColor = vec4((v_Normal+1.0)/2.0, 1.0);  //use normal
@@ -51,6 +55,15 @@ var FSHADER_SOURCE = `
     else{                  //Error, put red
       gl_FragColor = vec4(1, 0.2, 0.2, 1);
     }
+
+    vec3 lightVector = vec3(v_VertPos)-u_lightPos ;
+    float r= length(lightVector);
+    if (r<1.0){
+      gl_FragColor = vec4(1,0,0,1);
+    }
+    else if (r<2.0){
+      gl_FragColor = vec4(0,1,0,1);
+    }
   }` // add a line saying that if I don't want to use a specific texture or not in fragment shader.
 
 //Global Variables
@@ -69,6 +82,7 @@ let u_Sampler0;
 let u_Sampler1;
 let u_Sampler2;
 let u_whichTexture;
+let u_lightPos;
 
 function setupWebGL(){
   // Retrieve <canvas> element
@@ -117,6 +131,13 @@ function connectVariablesToGLSL(){
   u_FragColor = gl.getUniformLocation(gl.program, 'u_FragColor');
   if (!u_FragColor) {
     console.log('Failed to get the storage location of u_FragColor');
+    return;
+  }
+
+  //Get the storage location of the light
+  u_lightPos = gl.getUniformLocation(gl.program, 'u_lightPos');
+  if(!u_lightPos){
+    console.log("Failed to get the storage location of u_lightPos");
     return;
   }
 
@@ -201,6 +222,7 @@ let mouse_x = 0;
 let mouse_y = 0;
 let g_wattleAnimation = false;
 let g_wattleAnimationrock = 0;
+let g_lightPos = [0,1,-2];
 //let g_selectedSegment = 3;
 
 //Initialize global camera variable
@@ -241,6 +263,12 @@ function addActionForHTMLUI(){
     // Render all shapes with updated rotation angle
     renderAllShapes();
 });
+
+ //Light slide events
+ document.getElementById('lightSlideX').addEventListener('mousemove', function(ev) { if(ev.buttons == 1) {g_lightPos[0] = this.value/100; renderAllShapes();}});
+ document.getElementById('lightSlideY').addEventListener('mousemove', function(ev) { if(ev.buttons == 1) {g_lightPos[1] = this.value/100; renderAllShapes();}});
+ document.getElementById('lightSlideZ').addEventListener('mousemove', function(ev) { if(ev.buttons == 1) {g_lightPos[2] = this.value/100; renderAllShapes();}});
+
 
 // Mouse control to rotate canvas(CHATGPT helped me with this):
 canvas.addEventListener('mousedown', function(ev) {
@@ -510,6 +538,17 @@ function renderAllShapes(){
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); 
 
 
+  gl.uniform3f(u_lightPos, g_lightPos[0], g_lightPos[1], g_lightPos[2]);
+
+  //Draw the light
+  var light=new Cube();
+  light.color=[2,2,0,1];
+  light.matrix.translate(g_lightPos[0], g_lightPos[1], g_lightPos[2]);
+  light.matrix.scale(.1,.1,.1);
+  light.matrix.translate(-0.5,-0.5,-0.5);
+  light.render();
+
+
 
 // Draw the floor
   var floor = new Cube();
@@ -533,7 +572,7 @@ function renderAllShapes(){
   var body2 = new Cube();
   body2.color = [0.0, 0.0, 1.0, 1.0];
   if(g_normalOn) body2.textureNum=-3;
-  body2.matrix.translate(-0.25, -0.75, -2);
+  body2.matrix.translate(-3, -0.75, -2);
   body2.matrix.rotate(0,1,0,0);
   body2.matrix.scale(0.8, 0.8, 0.8);         //this one happens first! Right to left matrix multiplication
   body2.render();
@@ -543,7 +582,7 @@ function renderAllShapes(){
   var diamond = new Cube();
   diamond.color = [1.0, 0.0, 0.0, 1.0];
   diamond.textureNum = 2;
-  diamond.matrix.translate(-0.25, -0.75, 0.80);
+  diamond.matrix.translate(2, -0.75, -2);
   diamond.matrix.rotate(0,1,0,0);
   diamond.matrix.scale(0.5, 0.5, 0.5);         //this one happens first! Right to left matrix multiplication
   diamond.render();  
