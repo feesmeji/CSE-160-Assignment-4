@@ -424,7 +424,7 @@ var g_seconds=performance.now/1000.0-g_startTime;
 //Called by the broswer repeatedly whenever its time
 function tick(){
   // Save the current time
-  g_seconds = performance.now()/120.0-g_startTime;
+  g_seconds = performance.now()/1000.0-g_startTime;
   //console.log(g_seconds);
 
   //Update Animation Angles
@@ -484,6 +484,8 @@ function updateAnimationAngles(){ //put all of the different angles that we are 
   if(g_wattleAnimation){
     g_wattleAnimationrock = (-34 * Math.sin(g_seconds));
   }
+
+  g_lightPos[0] =Math.cos(g_seconds);
 }
 
 function keydown(ev) {
