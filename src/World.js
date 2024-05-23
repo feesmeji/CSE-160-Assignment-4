@@ -553,6 +553,7 @@ function renderAllShapes(){
   //Draw a sphere
   var sphere1 = new Sphere();
   sphere1.color = [1.0,1.0,1.0,1.0];
+  if (g_normalOn) sphere1.textureNum = -3
   sphere1.matrix.translate(0,0.5,0);
   sphere1.render();
 
