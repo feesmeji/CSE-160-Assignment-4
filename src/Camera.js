@@ -5,7 +5,7 @@ class Camera{
     constructor(){
         this.type = 'Camera';
         this.fov = 60.0;
-        this.eye = new Vector3([0,0, 7]);  //changes position
+        this.eye = new Vector3([0,0, 3.4]);  //changes position
         this.at = new Vector3([0,0,-1]);   //changes where your eye is looking at
         this.up = new Vector3([0,1,0]);
         this.speed = 0.3;
