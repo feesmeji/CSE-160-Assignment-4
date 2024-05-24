@@ -34,6 +34,7 @@ var FSHADER_SOURCE = `
   uniform vec3 u_lightPos;
   uniform vec3 u_cameraPos;
   varying vec4 v_VertPos;
+  uniform bool u_lightOn;
   void main() {
     if (u_whichTexture == -3){
       gl_FragColor = vec4((v_Normal+1.0)/2.0, 1.0);  //use normal
@@ -84,14 +85,20 @@ var FSHADER_SOURCE = `
     vec3 E = normalize(u_cameraPos-vec3(v_VertPos));
 
     // Specular
-    //float specular = pow(max(dot(E,R), 0.0), 100.0);
-    vec3 specular = vec3(gl_FragColor) * (pow(max(dot(E,R), 0.0), 10.0));  //Rohan's suggested code
+    float specular = pow(max(dot(E,R), 0.0), 64.0) * 0.8;
+    //vec3 specular = vec3(gl_FragColor) * (pow(max(dot(E,R), 0.0), 100.0));  //Rohan's suggested code
 
-    vec3 diffuse = vec3(gl_FragColor) * nDotL * 0.7;
-    vec3 ambient = vec3(gl_FragColor) * 0.5;
-    gl_FragColor = vec4(specular+diffuse+ambient, 1.0);
+    vec3 diffuse = vec3(1.0,1.0,0.9)* vec3(gl_FragColor) * nDotL * 0.7;
+    vec3 ambient = vec3(gl_FragColor) * 0.3;
 
-
+    if (u_lightOn){
+      if (u_whichTexture == -2){
+        gl_FragColor = vec4(specular+diffuse+ambient, 1.0);
+      }
+      else{
+        gl_FragColor = vec4(diffuse+ambient, 1.0);
+      }
+    }
   }` // add a line saying that if I don't want to use a specific texture or not in fragment shader.
 
 //Global Variables
@@ -112,6 +119,7 @@ let u_Sampler2;
 let u_whichTexture;
 let u_lightPos;
 let u_cameraPos;
+let u_lightOn;
 
 function setupWebGL(){
   // Retrieve <canvas> element
@@ -173,6 +181,13 @@ function connectVariablesToGLSL(){
   u_cameraPos = gl.getUniformLocation(gl.program, 'u_cameraPos');
   if(!u_cameraPos){
     console.log("Failed to get the storage location of u_cameraPos");
+    return;
+  }
+
+  // Get the storage location of u_lightOn
+  u_lightOn = gl.getUniformLocation(gl.program, 'u_lightOn');
+  if (!u_lightOn) {
+    console.log("Failed to get the storage location of u_lightOn");
     return;
   }
 
@@ -258,6 +273,7 @@ let mouse_y = 0;
 let g_wattleAnimation = false;
 let g_wattleAnimationrock = 0;
 let g_lightPos = [0,1,2];         //change light coorindates
+let g_lightOn = true;
 //let g_selectedSegment = 3;
 
 //Initialize global camera variable
@@ -266,6 +282,9 @@ let camera;
 
 function addActionForHTMLUI(){
   //Button Events
+
+  document.getElementById('lightOn').onclick = function() {g_lightOn=true;};
+  document.getElementById('lightOff').onclick = function() {g_lightOn=false;};
   document.getElementById('normalOn').onclick = function() {g_normalOn=true;};
   document.getElementById('normalOff').onclick = function() {g_normalOn=false;};
   document.getElementById('animationYellowOffButton').onclick = function() {g_yellowAnimation=false;};
@@ -581,6 +600,9 @@ function renderAllShapes(){
   //Pass the camera position to GLSL
   gl.uniform3fv(u_cameraPos, camera.eye.elements);
 
+  // Pass the light status
+  gl.uniform1i(u_lightOn, g_lightOn);
+
   //Draw the light
   var light=new Cube();
   light.color=[2,2,0,1];
@@ -594,8 +616,8 @@ function renderAllShapes(){
 // Draw the floor
   var floor = new Cube();
   floor.color = [0.45, 0.22, 0.05, 1.0]; //chatgpt helped me determine this dirt brown color
-  floor.textureNum=-2;
-  floor.matrix.translate(0, -0.75, 0.0);
+  floor.textureNum=2;
+  floor.matrix.translate(0, -0.81, 0.0);
   floor.matrix.scale(10, 0, 10);
   floor.matrix.translate(-0.5, 0, -0.5);
   floor.render();
@@ -613,7 +635,7 @@ function renderAllShapes(){
   var body2 = new Cube();
   body2.color = [0.0, 0.0, 1.0, 1.0];
   if(g_normalOn) body2.textureNum=-3;
-  body2.matrix.translate(-2, -.1, -2);
+  body2.matrix.translate(-2, -.74, -2);
   body2.matrix.rotate(0,1,0,0);
   body2.matrix.scale(0.8, 0.8, 0.8);         //this one happens first! Right to left matrix multiplication
   body2.render();
@@ -623,8 +645,13 @@ function renderAllShapes(){
   var sphere1 = new Sphere();
   sphere1.color = [1.0,1.0,1.0,1.0];
   //sphere1.textureNum = 2;
-  if (g_normalOn) sphere1.textureNum = -3;
-  sphere1.matrix.translate(1.3,-0.15,0);
+  if (g_normalOn){
+    sphere1.textureNum = -3;
+  }
+  else{
+    sphere1.textureNum = -2;
+  }
+  sphere1.matrix.translate(1.3,-0.20,0);
   sphere1.matrix.scale(0.5,0.5,0.5);
   sphere1.render();
 
@@ -756,14 +783,6 @@ function renderAllShapes(){
   right_foot.matrix.translate(-0.3, 1.5, 0)
   // right_foot.matrix.scale(0.2,0.10,0.2);
   right_foot.render();
-
-  // //Party hat!!
-   var hat = new Pyramid();
-   hat.color = [0.0, 1.0, 0.0, 1.0];
-   if(g_normalOn) hat.textureNum=-3;
-   hat.matrix.translate(-0.35, 0.65, 0.0);
-   hat.matrix.scale(0.2, 0.2, 0.2);
-   hat.render();
 
   //Check the time at the end of the function, and show on web page
   var duration = performance.now() - startTime;
