@@ -1,68 +1,98 @@
-//Rohan the tutor suggested I make this file to make it easier to make my blocky animal appear in my blocky world.
-class CenteredCube{
-    constructor(){
-        this.type='cube';
-        // this.position = [0.0, 0.0, 0.0];
-        this.color = [1.0,1.0,1.0,1.0];
-        // this.size = 5.0;
-        // this.segments = 3;
+class CenteredCube {
+    constructor() {
+        this.type = 'cube';
+        this.color = [1.0, 1.0, 1.0, 1.0];
         this.matrix = new Matrix4();
     }
+
     render() {
-        // var xy = this.position;
         var rgba = this.color;
-        // var size = this.size;
 
         gl.uniform1i(u_whichTexture, -2);
-
-        //Pass color of a point to u_FragColor var
         gl.uniform4f(u_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
+        gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);
+
+//Got helped from chatgpt to debug and fix normal coordinates.
+        // Front of cube
+        drawTriangle3DUVNormal(
+            [-0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5],
+            [0, 0, 1, 1, 1, 0],
+            [0, 0, -1, 0, 0, -1, 0, 0, -1]
+        );
+        drawTriangle3DUVNormal(
+            [-0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5],
+            [0, 0, 0, 1, 1, 1],
+            [0, 0, -1, 0, 0, -1, 0, 0, -1]
+        );
+  // Pass color of a point to u_FragColor var
+  gl.uniform4f(u_FragColor, rgba[0]*.9, rgba[1]*.9, rgba[2]*.9, rgba[3]);
 
 
-        // Pass the color of a point to u_FragColor uniform variable
-        gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);        
-        
-    
-//CHATGPT Helped me center the cube on the origin with the correct coordinates (This code is from asng2).
-//I later mapped out by hand each point on a visualizing tool to make sure it was positioned correctly centered on the origin.
-// I originally was printing cubes on the 1st quadrant which I didn't like.
+        // Back of cube
+        gl.uniform4f(u_FragColor, rgba[0]*.5, rgba[1]*.5, rgba[2]*.5, rgba[3]);
 
-        //Front of cube
-        drawTriangle3DUVNormal([-0.5,-0.5,-0.5,  0.5,0.5,-0.5,  0.5,-0.5,-0.5],    [0,0,  1,1,  1,0], 
-            [0,0,-1, 0,0,-1, 0,0,-1] );
-        drawTriangle3DUVNormal([-0.5,-0.5,-0.5, -0.5,0.5,-0.5,  0.5,0.5,-0.5],    [0,0,  0,1,  1,1],  
-            [0,0,-1, 0,0,-1, 0,0,-1]);
+        drawTriangle3DUVNormal(
+            [-0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5],
+            [0, 0, 1, 1, 1, 0],
+            [0, 0, 1, 0, 0, 1, 0, 0, 1]
+        );
+        drawTriangle3DUVNormal(
+            [-0.5, -0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
+            [0, 0, 0, 1, 1, 1],
+            [0, 0, 1, 0, 0, 1, 0, 0, 1]
+        );
 
-        //Back of cube
-        drawTriangle3DUVNormal([-0.5,-0.5,0.5,  0.5,0.5, 0.5,  0.5,-0.5,0.5],    [0,0,  1,1,  1,0], 
-            [0,0,1, 0,0,1, 0,0,1]);
-        drawTriangle3DUVNormal([-0.5,-0.5,0.5,  -0.5,0.5,0.5,  0.5,0.5,0.5],    [0,0,  0,1,  1,1], 
-            [0,0,1, 0,0,1, 0,0,1]);
-        gl.uniform4f(u_FragColor, rgba[0]*0.9, rgba[1]*0.9, rgba[2]*0.9, rgba[3]);
-        //Top of cube
-        drawTriangle3DUVNormal([-0.5,0.5,-0.5,  -0.5,0.5,0.5,  0.5,0.5,0.5]    [0,0,  0,1,  1,1], 
-            [0,1,0, 0,1,0, 0,1,0]);
-        drawTriangle3DUVNormal([-0.5,0.5,-0.5,  0.5,0.5,0.5,  0.5,0.5,-0.5],     [0,0,  1,1,  1,0], 
-            [0,1,0, 0,1,0, 0,1,0]);
+        // Top of cube
+        drawTriangle3DUVNormal(
+            [-0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
+            [0, 0, 0, 1, 1, 1],
+            [0, 1, 0, 0, 1, 0, 0, 1, 0]
+        );
+        drawTriangle3DUVNormal(
+            [-0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5],
+            [0, 0, 1, 1, 1, 0],
+            [0, 1, 0, 0, 1, 0, 0, 1, 0]
+        );
 
-        //Bottom of cube
-        drawTriangle3DUVNormal([-0.5,-0.5,-0.5,  -0.5,-0.5,0.5,  0.5,-0.5,0.5],    [0,0,  0,1,  1,1], 
-            [0,-1,0,  0,-1,0, 0,-1,0]);
-        drawTriangle3DUVNormal([-0.5,-0.5,-0.5,  0.5,-0.5,0.5,  0.5,-0.5,-0.5],    [0,0,  1,1,  1,0], 
-            [0,-1,0,  0,-1,0, 0,-1,0]);
+        gl.uniform4f(u_FragColor, rgba[0]*.8, rgba[1]*.8, rgba[2]*.8, rgba[3]);
 
-        //Right side of cube
-        drawTriangle3DUVNormal([0.5,0.5,0.5,  0.5,-0.5,0.5, 0.5,-0.5,-0.5],    [0,0,  1,1,  1,0], 
-            [1,0,0, 1,0,0, 1,0,0]);
-        drawTriangle3DUVNormal([0.5,0.5,0.5,  0.5,0.5,-0.5,  0.5,-0.5,-0.5],    [0,0,  0,1,  1,1], 
-            [1,0,0, 1,0,0, 1,0,0]);
+        // Bottom of cube
+        gl.uniform4f(u_FragColor, rgba[0]*.6, rgba[1]*.6, rgba[2]*.6, rgba[3]);
+        drawTriangle3DUVNormal(
+            [-0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5],
+            [0, 0, 0, 1, 1, 1],
+            [0, -1, 0, 0, -1, 0, 0, -1, 0]
+        );
+        drawTriangle3DUVNormal(
+            [-0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5],
+            [0, 0, 1, 1, 1, 0],
+            [0, -1, 0, 0, -1, 0, 0, -1, 0]
+        );
 
-        //Left side of cube
-        drawTriangle3DUVNormal([-0.5,-0.5,-0.5,  -0.5,0.5,-0.5,  -0.5,0.5,0.5],     [0,0,  1,1,  1,0], 
-            [-1,0,0, -1,0,0, -1,0,0]);
-        drawTriangle3DUVNormal([-0.5,-0.5,-0.5,  -0.5,-0.5,0.5,  -0.5,0.5,0.5],     [0,0,  0,1,  1,1], 
-            [-1,0,0, -1,0,0, -1,0,0]);
+        // Right side of cube
+        gl.uniform4f(u_FragColor, rgba[0]*.8, rgba[1]*.8, rgba[2]*.8, rgba[3]);
+        drawTriangle3DUVNormal(
+            [0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5],
+            [0, 0, 1, 1, 1, 0],
+            [1, 0, 0, 1, 0, 0, 1, 0, 0]
+        );
+        drawTriangle3DUVNormal(
+            [0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5],
+            [0, 0, 0, 1, 1, 1],
+            [1, 0, 0, 1, 0, 0, 1, 0, 0]
+        );
 
-
+        // Left side of cube
+        gl.uniform4f(u_FragColor, rgba[0]*.7, rgba[1]*.7, rgba[2]*.7, rgba[3]);
+        drawTriangle3DUVNormal(
+            [-0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5],
+            [0, 0, 0, 1, 1, 1],
+            [-1, 0, 0, -1, 0, 0, -1, 0, 0]
+        );
+        drawTriangle3DUVNormal(
+            [-0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5],
+            [0, 0, 1, 1, 1, 0],
+            [-1, 0, 0, -1, 0, 0, -1, 0, 0]
+        );
     }
 }

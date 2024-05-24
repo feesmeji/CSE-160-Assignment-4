@@ -203,7 +203,7 @@ function drawTriangle3DUVNormal(vertices, uv, normals){
   // Draw the triangle
   gl.drawArrays(gl.TRIANGLES, 0, n); 
 
-  g_vertexBuffer = null;
+  //g_vertexBuffer = null;
 
 
 }

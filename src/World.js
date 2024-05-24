@@ -57,7 +57,7 @@ var FSHADER_SOURCE = `
     }
 
      vec3 lightVector = u_lightPos-vec3(v_VertPos);
-     float r=length(lightVector);
+     float r = length(lightVector);
 
      //red/green distance visualization
     // if (r<1.0){
@@ -75,8 +75,11 @@ var FSHADER_SOURCE = `
     vec3 L = normalize(lightVector);
     vec3 N = normalize(v_Normal);
     float nDotL = max(dot(N,L),0.0);
-    gl_FragColor = gl_FragColor * nDotL;
-    gl_FragColor.a = 1.0;
+
+    vec3 diffuse = vec3(gl_FragColor) * nDotL;
+    vec3 ambient = vec3(gl_FragColor) * 0.3;
+    gl_FragColor = vec4(diffuse+ambient, 1.0);
+
   }` // add a line saying that if I don't want to use a specific texture or not in fragment shader.
 
 //Global Variables
@@ -559,7 +562,7 @@ function renderAllShapes(){
   var light=new Cube();
   light.color=[2,2,0,1];
   light.matrix.translate(g_lightPos[0], g_lightPos[1], g_lightPos[2]);
-  light.matrix.scale(.1,.1,.1);
+  light.matrix.scale(-.1,-.1,-.1);
   light.matrix.translate(-0.5,-0.5,-0.5);
   light.render();
 
@@ -584,10 +587,10 @@ function renderAllShapes(){
   
 
   //Draw a cube (blue)
-  var body2 = new Cube();
+  var body2 = new CenteredCube();
   body2.color = [0.0, 0.0, 1.0, 1.0];
   if(g_normalOn) body2.textureNum=-3;
-  body2.matrix.translate(-2, -0.75, -2);
+  body2.matrix.translate(-2, -.1, -2);
   body2.matrix.rotate(0,1,0,0);
   body2.matrix.scale(0.8, 0.8, 0.8);         //this one happens first! Right to left matrix multiplication
   body2.render();
@@ -600,9 +603,6 @@ function renderAllShapes(){
   sphere1.matrix.translate(1.3,-0.15,0);
   sphere1.matrix.scale(0.5,0.5,0.5);
   sphere1.render();
-
-
-
 
   //Draw Chicken Body (orange)
   var body = new CenteredCube();
