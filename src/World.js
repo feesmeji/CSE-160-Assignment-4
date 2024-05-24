@@ -32,6 +32,7 @@ var FSHADER_SOURCE = `
   uniform sampler2D u_Sampler2;
   uniform int u_whichTexture;
   uniform vec3 u_lightPos;
+  uniform vec3 u_cameraPos;
   varying vec4 v_VertPos;
   void main() {
     if (u_whichTexture == -3){
@@ -76,9 +77,20 @@ var FSHADER_SOURCE = `
     vec3 N = normalize(v_Normal);
     float nDotL = max(dot(N,L),0.0);
 
-    vec3 diffuse = vec3(gl_FragColor) * nDotL;
-    vec3 ambient = vec3(gl_FragColor) * 0.3;
-    gl_FragColor = vec4(diffuse+ambient, 1.0);
+    // Reflection
+    vec3 R = reflect(-L, N);
+
+    // eye
+    vec3 E = normalize(u_cameraPos-vec3(v_VertPos));
+
+    // Specular
+    //float specular = pow(max(dot(E,R), 0.0), 100.0);
+    vec3 specular = vec3(gl_FragColor) * (pow(max(dot(E,R), 0.0), 10.0));  //Rohan's suggested code
+
+    vec3 diffuse = vec3(gl_FragColor) * nDotL * 0.7;
+    vec3 ambient = vec3(gl_FragColor) * 0.5;
+    gl_FragColor = vec4(specular+diffuse+ambient, 1.0);
+
 
   }` // add a line saying that if I don't want to use a specific texture or not in fragment shader.
 
@@ -99,6 +111,7 @@ let u_Sampler1;
 let u_Sampler2;
 let u_whichTexture;
 let u_lightPos;
+let u_cameraPos;
 
 function setupWebGL(){
   // Retrieve <canvas> element
@@ -154,6 +167,12 @@ function connectVariablesToGLSL(){
   u_lightPos = gl.getUniformLocation(gl.program, 'u_lightPos');
   if(!u_lightPos){
     console.log("Failed to get the storage location of u_lightPos");
+    return;
+  }
+
+  u_cameraPos = gl.getUniformLocation(gl.program, 'u_cameraPos');
+  if(!u_cameraPos){
+    console.log("Failed to get the storage location of u_cameraPos");
     return;
   }
 
@@ -238,7 +257,7 @@ let mouse_x = 0;
 let mouse_y = 0;
 let g_wattleAnimation = false;
 let g_wattleAnimationrock = 0;
-let g_lightPos = [0,1,-2];
+let g_lightPos = [0,1,2];         //change light coorindates
 //let g_selectedSegment = 3;
 
 //Initialize global camera variable
@@ -501,7 +520,8 @@ function updateAnimationAngles(){ //put all of the different angles that we are 
     g_wattleAnimationrock = (-34 * Math.sin(g_seconds));
   }
 
-  g_lightPos[0] =Math.cos(g_seconds);
+  //Lighting animation
+  g_lightPos[0] = 3* Math.cos(g_seconds);
 }
 
 function keydown(ev) {
@@ -555,15 +575,18 @@ function renderAllShapes(){
   // Clear <canvas>  (rendering points)
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); 
 
-
+  //Pass the light position oto GLSL
   gl.uniform3f(u_lightPos, g_lightPos[0], g_lightPos[1], g_lightPos[2]);
+
+  //Pass the camera position to GLSL
+  gl.uniform3fv(u_cameraPos, camera.eye.elements);
 
   //Draw the light
   var light=new Cube();
   light.color=[2,2,0,1];
   light.matrix.translate(g_lightPos[0], g_lightPos[1], g_lightPos[2]);
   light.matrix.scale(-.1,-.1,-.1);
-  light.matrix.translate(-0.5,-0.5,-0.5);
+  light.matrix.translate(-0.8,-0.8,-0.8);
   light.render();
 
 
@@ -587,7 +610,7 @@ function renderAllShapes(){
   
 
   //Draw a cube (blue)
-  var body2 = new CenteredCube();
+  var body2 = new Cube();
   body2.color = [0.0, 0.0, 1.0, 1.0];
   if(g_normalOn) body2.textureNum=-3;
   body2.matrix.translate(-2, -.1, -2);
@@ -599,7 +622,8 @@ function renderAllShapes(){
   //Draw a sphere
   var sphere1 = new Sphere();
   sphere1.color = [1.0,1.0,1.0,1.0];
-  if (g_normalOn) sphere1.textureNum = -3
+  //sphere1.textureNum = 2;
+  if (g_normalOn) sphere1.textureNum = -3;
   sphere1.matrix.translate(1.3,-0.15,0);
   sphere1.matrix.scale(0.5,0.5,0.5);
   sphere1.render();
@@ -607,19 +631,22 @@ function renderAllShapes(){
   //Draw Chicken Body (orange)
   var body = new CenteredCube();
   body.color = [1.0, 0.647, 0.0, 1.0];
+  if(g_normalOn) body.textureNum=-3;
   body.matrix.scale(0.6,0.6,0.6);
   body.render();
 
   // Left Wing
   var left_wing = new CenteredCube();
   left_wing.color = [1.0, 0.647, 0.0, 1.0];
+  if(g_normalOn) left_wing.textureNum=-3;
   left_wing.matrix.translate(0.0, 0.10, -0.35)
-  left_wing.matrix.scale(0.5, 0.4, -0.10)
+  left_wing.matrix.scale(0.5, 0.4, 0.10)
   left_wing.render();
 
   //Right Wing
   var right_wing = new CenteredCube();
   right_wing.color = [1.0, 0.647, 0.0, 1.0];
+  if(g_normalOn) right_wing.textureNum=-3;
   right_wing.matrix.translate(0.0, 0.10, 0.35);
   right_wing.matrix.scale(0.5, 0.4, 0.10); 
   right_wing.render();
@@ -627,6 +654,7 @@ function renderAllShapes(){
   //Head
   var head = new CenteredCube();
   head.color = [1.0, 0.647, 0.0,1.0]
+  if(g_normalOn) head.textureNum=-3;
   head.matrix.translate(-0.35, 0.3, 0.0);
   head.matrix.scale(0.25, 0.5, 0.5); 
   head.render();
@@ -634,6 +662,7 @@ function renderAllShapes(){
   //beak
   var beak = new CenteredCube();
   beak.color = [1, 1, 0.0, 1.0];
+  if(g_normalOn) beak.textureNum=-3;
   beak.matrix.translate(-0.57, 0.3, 0);
   beak.matrix.scale(0.20, 0.20, 0.5); 
   beak.render();
@@ -641,6 +670,7 @@ function renderAllShapes(){
   //Wattle (red part)
   var wattle = new CenteredCube();
   wattle.color = [1.0, 0.0, 0.0, 1.0];
+  if(g_normalOn) wattle.textureNum=-3;
   wattle.matrix.translate(-0.52, 0.20, -0.001)
   wattle.matrix.rotate(g_wattleAnimationrock, 1, 0, 0);
   wattle.matrix.scale(0.10, 0.28, 0.2); 
@@ -650,6 +680,7 @@ function renderAllShapes(){
   //left eye
   var left_eye = new CenteredCube();
   left_eye.color = [0.0, 0.0, 0.0, 1.0];
+  if(g_normalOn) left_eye.textureNum=-3;
   left_eye.matrix.translate(-0.52001, 0.45, 0.20);
   left_eye.matrix.scale(0.1, 0.1, 0.10);
   left_eye.render();
@@ -657,6 +688,7 @@ function renderAllShapes(){
   //Right Eye
   var right_eye = new CenteredCube();
   right_eye.color = [0.0, 0.0, 0.0, 1.0];
+  if(g_normalOn) right_eye.textureNum=-3;
   right_eye.matrix.translate(-0.52001, 0.45, -0.20);
   right_eye.matrix.scale(0.1, 0.1, 0.10);
   right_eye.render();
@@ -664,6 +696,7 @@ function renderAllShapes(){
   //upper left leg
   var upper_leg1 = new CenteredCube();
   upper_leg1.color = [1.0, 0.647, 0.0, 1.0];
+  if(g_normalOn) upper_leg1.textureNum=-3;
   upper_leg1.matrix.translate(0, -0.25, -0.15)
   upper_leg1.matrix.rotate(g_yellowAngle, 0, 0, 1);  // Rotate around the z-axis
   upper_leg1.matrix.scale(0.31,0.15,0.13);
@@ -672,6 +705,7 @@ function renderAllShapes(){
   //upper right leg
   var upper_leg2 = new CenteredCube();
   upper_leg2.color = [1.0, 0.647, 0.0, 1.0];
+  if(g_normalOn) upper_leg2.textureNum=-3;
   upper_leg2.matrix.translate(0, -0.25, 0.15)
   upper_leg2.matrix.rotate(g_yellowAngleRight, 0, 0, 1);  // Rotate around the z-axis
   upper_leg2.matrix.scale(0.31,0.15,0.13);
@@ -680,6 +714,7 @@ function renderAllShapes(){
   // mid left leg
   var mid_leg1 = new CenteredCube();
   mid_leg1.color = [1, 1, 0.0, 1.0];
+  if(g_normalOn) mid_leg1.textureNum=-3;
   mid_leg1.matrix.translate(0, -0.45, -0.15); // Translate to the base of the leg
   mid_leg1.matrix.rotate(g_yellowAngle, 0, 0, 1);  // Rotate around the z-axis
   mid_leg1.matrix.rotate(g_midLegAngle, 0, 0, 1);  // Rotate the mid leg //Chat gpt helped me debug my slider control for a second level joint (I originally had but got rid of and couldn't get it to work anymore when I tried implementing again). So it suggested me to add this snippet of code
@@ -691,6 +726,7 @@ function renderAllShapes(){
   // //mid right leg
   var mid_leg2 = new CenteredCube();
   mid_leg2.color = [1, 1, 0.0, 1.0];
+  if(g_normalOn) mid_leg2.textureNum=-3;
   mid_leg2.matrix.translate(0, -0.45, 0.15)
   //mid_leg2.matrix.rotate(-g_yellowAngleRight, 0, 0, 1);  // Rotate around the z-axis
   mid_leg2.matrix.rotate(g_yellowAngleRight, 0, 0, 1);  // Rotate around the z-axis
@@ -701,6 +737,7 @@ function renderAllShapes(){
   // left foot
   var left_foot = new CenteredCube();
   left_foot.color = [1, 1, 0.0, 1.0];
+  if(g_normalOn) left_foot.textureNum=-3;
   left_foot.matrix = left_foot_coordMat;   //Chat gpt helped me debug my slider control for a second level joint (I originally had but got rid of and couldn't get it to work anymore when I tried implementing again). So it suggested me to add this snippet of code
   left_foot.matrix.translate(0.0, -0.45, 0)
   left_foot.matrix.rotate(g_left_footangle, 0, 1, 0);   //Chat gpt helped me debug my slider control for a second level joint (I originally had but got rid of and couldn't get it to work anymore when I tried implementing again). So it suggested me to add this snippet of code
@@ -712,6 +749,7 @@ function renderAllShapes(){
   //right foot
   var right_foot = new CenteredCube();
   right_foot.color = [1, 1, 0.0, 1.0];
+  if(g_normalOn) right_foot.textureNum=-3;
   right_foot.matrix = right_foot_coordMat;
   right_foot.matrix.translate(0.0, -0.45, 0.0)
   right_foot.matrix.scale(0.2,0.10,0.2);
@@ -722,6 +760,7 @@ function renderAllShapes(){
   // //Party hat!!
    var hat = new Pyramid();
    hat.color = [0.0, 1.0, 0.0, 1.0];
+   if(g_normalOn) hat.textureNum=-3;
    hat.matrix.translate(-0.35, 0.65, 0.0);
    hat.matrix.scale(0.2, 0.2, 0.2);
    hat.render();
