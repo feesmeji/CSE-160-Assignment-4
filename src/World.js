@@ -85,8 +85,8 @@ var FSHADER_SOURCE = `
     vec3 E = normalize(u_cameraPos-vec3(v_VertPos));
 
     // Specular
-    float specular = pow(max(dot(E,R), 0.0), 64.0) * 0.8;
-    //vec3 specular = vec3(gl_FragColor) * (pow(max(dot(E,R), 0.0), 100.0));  //Rohan's suggested code
+    //float specular = pow(max(dot(E,R), 0.0), 64.0) * 0.8;
+    vec3 specular = vec3(gl_FragColor) * (pow(max(dot(E,R), 0.0), 64.0));  //Rohan's suggested code
 
     vec3 diffuse = vec3(1.0,1.0,0.9)* vec3(gl_FragColor) * nDotL * 0.7;
     vec3 ambient = vec3(gl_FragColor) * 0.3;
@@ -272,7 +272,7 @@ let mouse_x = 0;
 let mouse_y = 0;
 let g_wattleAnimation = false;
 let g_wattleAnimationrock = 0;
-let g_lightPos = [0,1,2];         //change light coorindates
+let g_lightPos = [0,1.35,2];         //change light coorindates
 let g_lightOn = true;
 //let g_selectedSegment = 3;
 
@@ -604,7 +604,7 @@ function renderAllShapes(){
   gl.uniform1i(u_lightOn, g_lightOn);
 
   //Draw the light
-  var light=new Cube();
+  var light=new CenteredCube();
   light.color=[2,2,0,1];
   light.matrix.translate(g_lightPos[0], g_lightPos[1], g_lightPos[2]);
   light.matrix.scale(-.1,-.1,-.1);
@@ -631,9 +631,48 @@ function renderAllShapes(){
   sky.render();
   
 
-  //Draw a cube (blue)
+
+  //Prof's shape thing
+  //Draw a cube (red one)
+  var body = new Cube();
+  body.color = [1.0, 0.0, 0.0, 1.0];
+  if(g_normalOn) body.textureNum=-3;  //remove to not have bright shining thing on other cubes.
+  body.textureNum = -2;
+  body.matrix.translate(-3, -0.75, 0.0);
+  body.matrix.rotate(-5,1,0,0);
+  body.matrix.scale(0.5, 0.3, 0.5);         //this one happens first! Right to left matrix multiplication
+  body.render();
+
+
+  // Draw a yellow left arm
+  var leftArm = new Cube();
+  leftArm.color = [1,1,0,1];
+  if(g_normalOn) leftArm.textureNum=-3;
+  leftArm.matrix.setTranslate(-2.75,-0.5,0.0);
+  leftArm.matrix.rotate(-5, 1, 0, 0);
+  // leftArm.matrix.rotate(-g_yellowAngle, 0, 0, 1);  //2.6: rotate the yellow joint
+  leftArm.matrix.rotate(-g_yellowAngle, 0, 0, 1);  //2.6: rotate the yellow joint
+  var yellowCoordinatesMat = new Matrix4(leftArm.matrix);
+  leftArm.matrix.scale(0.25, 0.7, 0.5);
+  leftArm.matrix.translate(-0.5, 0, 0);
+  leftArm.render();
+
+  //Test box (pink box)
+  var box = new Cube();
+  box.color = [1,0,1,1];
+  if(g_normalOn) box.textureNum=-3;
+  box.textureNum = -2;
+  box.matrix = yellowCoordinatesMat;
+  box.matrix.translate(0,0.65,0.0,0);
+  box.matrix.rotate(g_magentaAngle, 0, 0, 1);
+  box.matrix.scale(0.3, 0.3, 0.3);
+  box.matrix.translate(-0.5,0,-0.001);
+  box.render();
+
+
+  //Draw a cube (baby blue)
   var body2 = new Cube();
-  body2.color = [0.0, 0.0, 1.0, 1.0];
+  body2.color = [0.7, 0.85, 0.95, 1.0];
   if(g_normalOn) body2.textureNum=-3;
   body2.matrix.translate(-2, -.74, -2);
   body2.matrix.rotate(0,1,0,0);
