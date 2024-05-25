@@ -661,7 +661,6 @@ function renderAllShapes(){
   var box = new Cube();
   box.color = [1,0,1,1];
   if(g_normalOn) box.textureNum=-3;
-  box.textureNum = -2;
   box.matrix = yellowCoordinatesMat;
   box.matrix.translate(0,0.65,0.0,0);
   box.matrix.rotate(g_magentaAngle, 0, 0, 1);
