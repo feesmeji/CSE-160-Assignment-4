@@ -637,7 +637,7 @@ function renderAllShapes(){
   var body = new Cube();
   body.color = [1.0, 0.0, 0.0, 1.0];
   if(g_normalOn) body.textureNum=-3;  //remove to not have bright shining thing on other cubes.
-  body.textureNum = -2;
+  //body.textureNum = -2;
   body.matrix.translate(-3, -0.75, 0.0);
   body.matrix.rotate(-5,1,0,0);
   body.matrix.scale(0.5, 0.3, 0.5);         //this one happens first! Right to left matrix multiplication
