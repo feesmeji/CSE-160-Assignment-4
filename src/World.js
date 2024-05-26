@@ -89,8 +89,8 @@ var FSHADER_SOURCE = `
     //float specular = pow(max(dot(E,R), 0.0), 64.0) * 0.8;
     vec3 specular = vec3(gl_FragColor) * (pow(max(dot(E,R), 0.0), 64.0));  //Rohan's suggested code
 
-    vec3 diffuse = vec3(1.0,1.0,0.9)* vec3(gl_FragColor) * nDotL * u_lightColor * 0.7;  //line inspired by: https://people.ucsc.edu/~jkohls/pa4/virtualWorld.js
-    vec3 ambient = vec3(gl_FragColor) * 0.3;
+    vec3 diffuse = vec3(1.0,1.0,0.9)* vec3(gl_FragColor) * nDotL * 0.7; 
+    vec3 ambient = vec3(gl_FragColor) * 0.35 * u_lightColor;
 
     if (u_lightOn){
       if (u_whichTexture == -2){
