@@ -6,6 +6,7 @@ class Cube{
         // this.size = 5.0;
         // this.segments = 3;
         this.matrix = new Matrix4();
+        this.normalMatrix = new Matrix4();
         this.textureNum=-2;
 
     //     this.cubeVerts32= new Float32Array([
@@ -51,7 +52,10 @@ class Cube{
 
 
         // Pass the color of a point to u_FragColor uniform variable
-        gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);        
+        gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);   
+        
+        //Normal Matrix
+        gl.uniformMatrix4fv(u_NormalMatrix, false, this.normalMatrix.elements);
         
     
 // Section 1: Drawtriangle3DUV

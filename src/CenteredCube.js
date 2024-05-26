@@ -3,6 +3,7 @@ class CenteredCube {
         this.type = 'cube';
         this.color = [1.0, 1.0, 1.0, 1.0];
         this.matrix = new Matrix4();
+        this.normalMatrix = new Matrix4();
         this.textureNum = -2;
     }
 
@@ -13,6 +14,8 @@ class CenteredCube {
         gl.uniform4f(u_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
         gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);
 
+                //Normal Matrix
+        gl.uniformMatrix4fv(u_NormalMatrix, false, this.normalMatrix.elements);
 //Got helped from chatgpt to debug and fix normal coordinates.
         // Front of cube
         drawTriangle3DUVNormal(

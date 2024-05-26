@@ -9,13 +9,18 @@ var VSHADER_SOURCE = `
   varying vec3 v_Normal;
   varying vec4 v_VertPos;
   uniform mat4 u_ModelMatrix;
+  uniform mat4 u_NormalMatrix;
   uniform mat4 u_GlobalRotateMatrix;
   uniform mat4 u_ViewMatrix;
   uniform mat4 u_ProjectionMatrix;
   void main() { 
     gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_GlobalRotateMatrix * u_ModelMatrix * a_Position;
     v_UV = a_UV;
-    v_Normal = a_Normal;
+
+    v_Normal = normalize(vec3(u_NormalMatrix * vec4(a_Normal, 1.0)));
+    //v_Normal = a_Normal;
+
+
     v_VertPos = u_ModelMatrix * a_Position;
   }`
 //where pointsize changes the size of the squares.
@@ -90,7 +95,7 @@ var FSHADER_SOURCE = `
     vec3 specular = vec3(gl_FragColor) * (pow(max(dot(E,R), 0.0), 64.0));  //Rohan's suggested code
 
     vec3 diffuse = vec3(1.0,1.0,0.9)* vec3(gl_FragColor) * nDotL * 0.7; 
-    vec3 ambient = vec3(gl_FragColor) * 0.35 * u_lightColor;
+    vec3 ambient = vec3(gl_FragColor) * 0.30 * u_lightColor;
 
     if (u_lightOn){
       if (u_whichTexture == -2){
@@ -111,6 +116,7 @@ let a_Normal;
 let u_FragColor;
 let u_Size;
 let u_ModelMatrix;
+let u_NormalMatrix;
 let u_ProjectionMatrix;
 let u_ViewMatrix;
 let u_GlobalRotateMatrix;
@@ -206,6 +212,12 @@ function connectVariablesToGLSL(){
     return;
   }
 
+  u_NormalMatrix = gl.getUniformLocation(gl.program, 'u_NormalMatrix');
+  if(!u_NormalMatrix){
+    console.log('Failed to get the storage location of u_NormalMatrix');
+    return;
+  }
+
   u_GlobalRotateMatrix = gl.getUniformLocation(gl.program, 'u_GlobalRotateMatrix');
   if(!u_GlobalRotateMatrix){
     console.log('Failed to get the storage location of u_GlobalRotateMatrix');
@@ -252,7 +264,7 @@ function connectVariablesToGLSL(){
   // Set an initial value for this matrix to identify
   var identityM = new Matrix4();
   gl.uniformMatrix4fv(u_ModelMatrix, false, identityM.elements);
-
+  gl.uniformMatrix4fv(u_NormalMatrix, false, identityM.elements);
   gl.uniformMatrix4fv(u_ProjectionMatrix, false, identityM.elements); 
   gl.uniformMatrix4fv(u_ViewMatrix, false, identityM.elements);   //If professor's guides make things dissapear, probably forgot to initialize something. 
 }
@@ -676,6 +688,7 @@ function renderAllShapes(){
   var yellowCoordinatesMat = new Matrix4(leftArm.matrix);
   leftArm.matrix.scale(0.25, 0.7, 0.5);
   leftArm.matrix.translate(-0.5, 0, 0);
+  leftArm.normalMatrix.setInverseOf(leftArm.matrix).transpose();
   leftArm.render();
 
   //Test box (pink box)
@@ -687,6 +700,7 @@ function renderAllShapes(){
   box.matrix.rotate(g_magentaAngle, 0, 0, 1);
   box.matrix.scale(0.3, 0.3, 0.3);
   box.matrix.translate(-0.5,0,-0.001);
+  box.normalMatrix.setInverseOf(box.matrix).transpose();
   box.render();
 
 
@@ -760,6 +774,7 @@ function renderAllShapes(){
   wattle.matrix.translate(-0.52, 0.20, -0.001)
   wattle.matrix.rotate(g_wattleAnimationrock, 1, 0, 0);
   wattle.matrix.scale(0.10, 0.28, 0.2); 
+  wattle.normalMatrix.setInverseOf(wattle.matrix).transpose();
   wattle.render();
 
 
@@ -786,6 +801,8 @@ function renderAllShapes(){
   upper_leg1.matrix.translate(0, -0.25, -0.15)
   upper_leg1.matrix.rotate(g_yellowAngle, 0, 0, 1);  // Rotate around the z-axis
   upper_leg1.matrix.scale(0.31,0.15,0.13);
+  //  leftArm.normalMatrix.setInverseOf(leftArm.matrix).transpose();
+  upper_leg1.normalMatrix.setInverseOf(upper_leg1.matrix).transpose();
   upper_leg1.render();
 
   //upper right leg
@@ -795,6 +812,7 @@ function renderAllShapes(){
   upper_leg2.matrix.translate(0, -0.25, 0.15)
   upper_leg2.matrix.rotate(g_yellowAngleRight, 0, 0, 1);  // Rotate around the z-axis
   upper_leg2.matrix.scale(0.31,0.15,0.13);
+  upper_leg2.normalMatrix.setInverseOf(upper_leg2.matrix).transpose();
   upper_leg2.render();
 
   // mid left leg
@@ -806,6 +824,7 @@ function renderAllShapes(){
   mid_leg1.matrix.rotate(g_midLegAngle, 0, 0, 1);  // Rotate the mid leg //Chat gpt helped me debug my slider control for a second level joint (I originally had but got rid of and couldn't get it to work anymore when I tried implementing again). So it suggested me to add this snippet of code
   var left_foot_coordMat = new Matrix4(mid_leg1.matrix); //Debugged chat gpt suggested code
   mid_leg1.matrix.scale(0.08,0.5,0.08);
+  mid_leg1.normalMatrix.setInverseOf(mid_leg1.matrix).transpose();
   mid_leg1.render();
 
 
@@ -818,6 +837,7 @@ function renderAllShapes(){
   mid_leg2.matrix.rotate(g_yellowAngleRight, 0, 0, 1);  // Rotate around the z-axis
   var right_foot_coordMat = new Matrix4(mid_leg2.matrix);
   mid_leg2.matrix.scale(0.08,0.5,0.08);
+  mid_leg2.normalMatrix.setInverseOf(mid_leg2.matrix).transpose();
   mid_leg2.render();
 
   // left foot
@@ -829,6 +849,7 @@ function renderAllShapes(){
   left_foot.matrix.rotate(g_left_footangle, 0, 1, 0);   //Chat gpt helped me debug my slider control for a second level joint (I originally had but got rid of and couldn't get it to work anymore when I tried implementing again). So it suggested me to add this snippet of code
   left_foot.matrix.scale(0.2,0.10,0.2);
   left_foot.matrix.translate(-0.3, 1.5, 0)
+  left_foot.normalMatrix.setInverseOf(left_foot.matrix).transpose();
   left_foot.render();
 
 
@@ -841,6 +862,7 @@ function renderAllShapes(){
   right_foot.matrix.scale(0.2,0.10,0.2);
   right_foot.matrix.translate(-0.3, 1.5, 0)
   // right_foot.matrix.scale(0.2,0.10,0.2);
+  right_foot.normalMatrix.setInverseOf(right_foot.matrix).transpose();
   right_foot.render();
 
   //Check the time at the end of the function, and show on web page
