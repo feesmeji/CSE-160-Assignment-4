@@ -35,6 +35,7 @@ var FSHADER_SOURCE = `
   uniform vec3 u_cameraPos;
   varying vec4 v_VertPos;
   uniform bool u_lightOn;
+  uniform vec3 u_lightColor;  //code inspired by https://people.ucsc.edu/~jkohls/pa4/virtualWorld.js
   void main() {
     if (u_whichTexture == -3){
       gl_FragColor = vec4((v_Normal+1.0)/2.0, 1.0);  //use normal
@@ -88,7 +89,7 @@ var FSHADER_SOURCE = `
     //float specular = pow(max(dot(E,R), 0.0), 64.0) * 0.8;
     vec3 specular = vec3(gl_FragColor) * (pow(max(dot(E,R), 0.0), 64.0));  //Rohan's suggested code
 
-    vec3 diffuse = vec3(1.0,1.0,0.9)* vec3(gl_FragColor) * nDotL * 0.7;
+    vec3 diffuse = vec3(1.0,1.0,0.9)* vec3(gl_FragColor) * nDotL * u_lightColor * 0.7;  //line inspired by: https://people.ucsc.edu/~jkohls/pa4/virtualWorld.js
     vec3 ambient = vec3(gl_FragColor) * 0.3;
 
     if (u_lightOn){
@@ -120,6 +121,7 @@ let u_whichTexture;
 let u_lightPos;
 let u_cameraPos;
 let u_lightOn;
+let u_lightColor; //line inspired by https://people.ucsc.edu/~jkohls/pa4/virtualWorld.js
 
 function setupWebGL(){
   // Retrieve <canvas> element
@@ -188,6 +190,13 @@ function connectVariablesToGLSL(){
   u_lightOn = gl.getUniformLocation(gl.program, 'u_lightOn');
   if (!u_lightOn) {
     console.log("Failed to get the storage location of u_lightOn");
+    return;
+  }
+
+  //connect this variable to glsl, inspired by: https://people.ucsc.edu/~jkohls/pa4/virtualWorld.js
+  u_lightColor = gl.getUniformLocation(gl.program, 'u_lightColor');
+  if (!u_lightColor) {
+    console.log("Failed to get the storage location of u_lightColor");
     return;
   }
 
@@ -274,6 +283,7 @@ let g_wattleAnimation = false;
 let g_wattleAnimationrock = 0;
 let g_lightPos = [0,1.35,2];         //change light coorindates
 let g_lightOn = true;
+let g_lightColor = new Vector3([1,1,1]); //inspired by https://people.ucsc.edu/~jkohls/pa4/virtualWorld.js
 //let g_selectedSegment = 3;
 
 //Initialize global camera variable
@@ -323,6 +333,12 @@ function addActionForHTMLUI(){
  document.getElementById('lightSlideY').addEventListener('mousemove', function(ev) { if(ev.buttons == 1) {g_lightPos[1] = this.value/100; renderAllShapes();}});
  document.getElementById('lightSlideZ').addEventListener('mousemove', function(ev) { if(ev.buttons == 1) {g_lightPos[2] = this.value/100; renderAllShapes();}});
 
+
+
+ //Light color slide events (inspired by:https://people.ucsc.edu/~jkohls/pa4/virtualWorld.js)
+ document.getElementById('red_light').addEventListener("mousemove", function(ev) { if(ev.buttons == 1) {g_lightColor.elements[0] = this.value/255;}});
+ document.getElementById('green_light').addEventListener("mousemove", function(ev) { if(ev.buttons == 1) {g_lightColor.elements[1] = this.value/255;}});
+ document.getElementById('blue_light').addEventListener("mousemove", function(ev) { if(ev.buttons == 1) {g_lightColor.elements[2] = this.value/255;}});
 
 // Mouse control to rotate canvas(CHATGPT helped me with this):
 canvas.addEventListener('mousedown', function(ev) {
@@ -602,6 +618,11 @@ function renderAllShapes(){
 
   // Pass the light status
   gl.uniform1i(u_lightOn, g_lightOn);
+
+  //Pass the light colors to glsl (inspired by: https://people.ucsc.edu/~jkohls/pa4/virtualWorld.js).
+  gl.uniform3f(u_lightColor, g_lightColor.elements[0], g_lightColor.elements[1], g_lightColor.elements[2]);
+
+
 
   //Draw the light
   var light=new CenteredCube();
