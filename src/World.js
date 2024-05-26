@@ -301,17 +301,17 @@ function addActionForHTMLUI(){
   document.getElementById('animationYellowOnButton').onclick = function() {g_yellowAnimation=true;};
 
   //Size Slider Events (chat gpt helped me fix this function, for some reason the professor's code was 
-  // causing the program to draw when I simply just hovered my mouse over the slider, which I don't want)
-  document.getElementById('angleSlide').addEventListener('input', function() {
-    g_globalAngle = this.value; 
-    renderAllShapes(); 
-  });  //calls renderallshapes everytime the slider moves dynamically. Updates happen on the current state of the world.
+//   // causing the program to draw when I simply just hovered my mouse over the slider, which I don't want)
+//   document.getElementById('angleSlide').addEventListener('input', function() {
+//     g_globalAngle = this.value; 
+//     renderAllShapes(); 
+//   });  //calls renderallshapes everytime the slider moves dynamically. Updates happen on the current state of the world.
 
-//Chat gpt helped me debug my slider control for a second level joint (I originally had but got rid of and couldn't get it to work anymore when I tried implementing again). So it suggested me to add this line of code
-  document.getElementById('angleSlideY').addEventListener('input', function() {
-    g_globalAngleY = this.value; 
-    renderAllShapes(); 
-  });
+// //Chat gpt helped me debug my slider control for a second level joint (I originally had but got rid of and couldn't get it to work anymore when I tried implementing again). So it suggested me to add this line of code
+//   document.getElementById('angleSlideY').addEventListener('input', function() {
+//     g_globalAngleY = this.value; 
+//     renderAllShapes(); 
+//   });
   // Color Slider Events
   //document.getElementById('yellowSlide').addEventListener('input', function() {g_yellowAngle = this.value; renderAllShapes();});
 
