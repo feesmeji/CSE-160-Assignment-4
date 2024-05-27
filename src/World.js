@@ -95,7 +95,7 @@ var FSHADER_SOURCE = `
     vec3 specular = vec3(gl_FragColor) * (pow(max(dot(E,R), 0.0), 64.0));  //Rohan's suggested code
 
     vec3 diffuse = vec3(1.0,1.0,0.9)* vec3(gl_FragColor) * nDotL * 0.7; 
-    vec3 ambient = vec3(gl_FragColor) * 0.30 * u_lightColor;
+    vec3 ambient = vec3(gl_FragColor) * 0.25 * u_lightColor;
 
     if (u_lightOn){
       if (u_whichTexture == -2){
