@@ -295,6 +295,7 @@ let g_wattleAnimation = false;
 let g_wattleAnimationrock = 0;
 let g_lightPos = [0,1.35,2];         //change light coorindates
 let g_lightOn = true;
+let g_lightAnimation = false;
 let g_lightColor = new Vector3([1,1,1]); //inspired by https://people.ucsc.edu/~jkohls/pa4/virtualWorld.js
 //let g_selectedSegment = 3;
 
@@ -311,7 +312,8 @@ function addActionForHTMLUI(){
   document.getElementById('normalOff').onclick = function() {g_normalOn=false;};
   document.getElementById('animationYellowOffButton').onclick = function() {g_yellowAnimation=false;};
   document.getElementById('animationYellowOnButton').onclick = function() {g_yellowAnimation=true;};
-
+  document.getElementById('light_animationOff').onclick = function() {g_lightAnimation=false;};
+  document.getElementById('light_animationOn').onclick = function() {g_lightAnimation=true;};
   //Size Slider Events (chat gpt helped me fix this function, for some reason the professor's code was 
 //   // causing the program to draw when I simply just hovered my mouse over the slider, which I don't want)
 //   document.getElementById('angleSlide').addEventListener('input', function() {
@@ -568,7 +570,9 @@ function updateAnimationAngles(){ //put all of the different angles that we are 
   }
 
   //Lighting animation
-  g_lightPos[0] = 3* Math.cos(g_seconds);
+  if(g_lightAnimation){
+    g_lightPos[0] = 3* Math.cos(g_seconds);
+  }
 }
 
 function keydown(ev) {
@@ -622,7 +626,7 @@ function renderAllShapes(){
   // Clear <canvas>  (rendering points)
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); 
 
-  //Pass the light position oto GLSL
+  //Pass the light position to GLSL
   gl.uniform3f(u_lightPos, g_lightPos[0], g_lightPos[1], g_lightPos[2]);
 
   //Pass the camera position to GLSL
@@ -633,6 +637,19 @@ function renderAllShapes(){
 
   //Pass the light colors to glsl (inspired by: https://people.ucsc.edu/~jkohls/pa4/virtualWorld.js).
   gl.uniform3f(u_lightColor, g_lightColor.elements[0], g_lightColor.elements[1], g_lightColor.elements[2]);
+
+
+  // // mid left leg
+  // var mid_leg1 = new CenteredCube();
+  // mid_leg1.color = [1, 1, 0.0, 1.0];
+  // if(g_normalOn) mid_leg1.textureNum=-3;
+  // mid_leg1.matrix.translate(0, -0.45, -0.15); // Translate to the base of the leg
+  // mid_leg1.matrix.rotate(g_yellowAngle, 0, 0, 1);  // Rotate around the z-axis
+  // mid_leg1.matrix.rotate(g_midLegAngle, 0, 0, 1);  // Rotate the mid leg //Chat gpt helped me debug my slider control for a second level joint (I originally had but got rid of and couldn't get it to work anymore when I tried implementing again). So it suggested me to add this snippet of code
+  // var left_foot_coordMat = new Matrix4(mid_leg1.matrix); //Debugged chat gpt suggested code
+  // mid_leg1.matrix.scale(0.08,0.5,0.08);
+  // mid_leg1.normalMatrix.setInverseOf(mid_leg1.matrix).transpose();
+  // mid_leg1.render();
 
 
 
