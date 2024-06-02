@@ -1,51 +1,12 @@
-<!-- Licensed under a BSD license. See license.html for license -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Assignment 5.C</title>
+    <meta charset="utf-8" />
+    <title>index.html file for Asgn4</title>
   </head>
   <body>
-    <h1>Fernando Mejia</h1>
-    <p>UCSC Email: feesmeji@ucsc.edu</p>
+    <h1>Landing Page for CSE160 Asgn4</h1>
 
-    <h2> Welcome to my dog park! Here you will find my pet dog and his various different-shaped toys and some obstacles.</h2>
+    <p>Check out my <a href="https://feesmeji.github.io/CSE-160-Assignment-4/src/World.html">Github live hosted submission for Asgn 4</a>.</p>
 
-    <canvas id="c" height="600" width="600"></canvas>
-
-    <style>
-        .control-container {
-            position: absolute; /* or relative, fixed, etc. depending on your needs */
-            top: 20px; /* adjust top position */
-            left: 20px; /* adjust left position */
-        }
-    </style>
-
-    <!-- Add containers for GUI controls , Provided by chatgpt to fix overlapping lighting controls-->
-    <div id="ambient-container"></div>
-    <div id="hemisphere-container"></div>
-    <div id="directional-container"></div>
-
-
-    <script type="importmap">
-        {
-            "imports":{
-                "three": "https://unpkg.com/three@0.163.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.163.0/examples/jsm/"
-            }
-        }
-    </script>
-    <script type="module" src="./script.js"></script>
-
-    <p>Notes to grader: Most code based off of threejs.org guides that were linked on assignment 5.B instructions. ChatGPT sometimes helped me debug and get unstuck with my code, and I made comments in my code indicating where it was used. Also recieved help from a course tutor. I was able to get my 3 different types of light sources in my implementation (ambient, directional, rectArea) but I could't figure out how to seperate the controls on my html page correctly. I was able to get the 3 light sources on my implementation with just the three.js.org guides, but I tried asking chatgpt for help on fixing the lighting controls on the top right corner (not part of the assignment) after meeting with various course tutors on how to fix it but they didn't know. The GUI implementations (for lighting controls) are a mix of three.js.org code and chat gpt suggested code that didn't really work every even after hours of trying to debug. I ended up not being able to fix the lighting controls, but I did all of the required points for 5B.
-    </p>
-    </body>
-</html>
-
-        <!-- {
-            "imports":{
-                "three": "./three.module.js",
-                "three/addons/":"./three.js-master/examples/jsm/"
-            }
-        } -->
+  </body>
