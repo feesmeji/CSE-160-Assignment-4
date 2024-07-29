@@ -7,14 +7,13 @@
 
   <body onload="main()">
   
-    <h1>Fernando Mejia</h1>
+    <h1>CSE 160 Assignment 4: WebGL Lighting</h1>
 
-    <p>UCSC Email: feesmeji@ucsc.edu</p>
+    <p>Author: Fernando Mejia</p>
+    <p><b>Description: </b>Virtual 3D world featuring dynamic lighting using WebGL. Implemented Phong shading, interactive
+      camera controls, colored lighting, and various objects to showcase the lighting effects</p>
     
-    <h3>Notes to grader at bottom of webpage.</h3>
-    </p>
-
-    <p>Controls: W(Move Forward), S(Move Backward), A(Move Left), D(Move Right), Q(Pan Left), E(Pan Right)</p>
+    <p><b>Scene Controls:</b> W(Move Forward), S(Move Backward), A(Move Left), D(Move Right), Q(Pan Left), E(Pan Right)</p>
 
     <canvas id="webgl" width="800" height="600">
     Please use a browser that supports "canvas"
@@ -24,18 +23,19 @@
     <p id="numdot"> Performance will show here once you start drawing. </p>
 
 
-    
+    <p><b>Vector Normals / Light Switches:</b></p>
     <button type="button" id="normalOn">Normal On</button>
     <button type="button" id="normalOff">Normal Off</button>
 
     <button type="button" id="lightOn">Light On</button>
     <button type="button" id="lightOff">Light Off</button>
 
-    <p>Light Animation (Move left to right across top of canvas):
+    <p><b>Light Animation (Move left to right across top of canvas):</b>
       <button type="button" id="light_animationOn">Light Animation On</button>
       <button type="button" id="light_animationOff">Light Animation Off</button>
     </p>
 
+    <b>Light Position Sliders:</b>
     <p>
       Light X <input type="range" min="-400" max="400" value="0" class="slider" id="lightSlideX">
       Light Y <input type="range" min="-400" max="400" value="100" class="slider" id="lightSlideY">
@@ -44,6 +44,7 @@
     </p>
 
 <!-- RBG lighting inspired by: https://people.ucsc.edu/~jkohls/pa4/virtualWorld.js-->
+    <p><b>RGB Lighting Sliders:</b></p>
     <p>
       Red Light <input type="range" min="-400" max="400" value="0" class="slider" id="red_light">
       Green Light <input type="range" min="-400" max="400" value="0" class="slider" id="green_light">
@@ -51,11 +52,9 @@
 
     </p>
 
-    <br><br>
-
-    <p>
+    <p><b>
       Blocky Animal Controls:
-      </p>
+      </p></b>
 <!-- Yellow Slider controls the left-to-right movement of the leg (ChatGPT helped me modify this line of code) -->
     <p>Right_Leg Slider <input type="range" min="-34.0" max="34.0" step="0.1" value="0" class="slider" id="yellowSlideRight"></p>
 
@@ -68,17 +67,6 @@
     <button type="button" id="animationYellowOffButton">OFF</button>
 <br><br>
     Also: Do Shift-Click for a new animation!
-
-<br><br>
-<br><br>
-<br><br>
-<br><br>
-<br><br>
-<br><br>
-<br><br>
-<p>Notes to grader (new for Asgn4): I used my Asgn3 code as my starter code. Most code based off of Professor's walkthrough videos. ChatGPT sometimes helped me debug, get unstuck with my code, and learn new stuff for my code. I made comments in my code indicating where it was used. Also recieved help from various course tutors. I learned how to do the light color sliders from https://people.ucsc.edu/~jkohls/pa4/virtualWorld.js and my code was inspired by their implementation. I indicated in my code where I was inspired by this student's implementation, although I learned that the steps to making it work was largely similar to the code I had already done for things like my light position sliders and getting the camera to work with GLSL.</p>
-<br><br>
-<p>Notes to grader (from Asgn3): Most code based off of Professor's walkthrough videos. ChatGPT sometimes helped me debug, get unstuck with my code, and learn new stuff for my code. I made comments in my code indicating where it was used. Also recieved help from various course tutors. I sometimes referred to: https://people.ucsc.edu/~jbrowne2/asgn3/src/Camera.js in my Camera.js file to help me debug and correct my code(I mostly wrote it following the assignment instuctions).</p>
 
     <script src="../lib/webgl-utils.js"></script>
     <script src="../lib/webgl-debug.js"></script>
@@ -93,5 +81,13 @@
     <script src="../src/Sphere.js"></script>
     <script src="../src/CenteredCube.js"></script>
     <script src="../src/World.js"></script>
+
+    <p id="last-modified"><i></i></p>
+
+    <script>
+    let text = "Last modified: ";
+    document.getElementById("last-modified").innerHTML = '<i>' + text + document.lastModified + '</i>';
+    </script>
+
   </body>
 </html>

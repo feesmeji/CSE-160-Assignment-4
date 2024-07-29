@@ -91,8 +91,8 @@ var FSHADER_SOURCE = `
     vec3 E = normalize(u_cameraPos-vec3(v_VertPos));
 
     // Specular
-    //float specular = pow(max(dot(E,R), 0.0), 64.0) * 0.8;
-    vec3 specular = vec3(gl_FragColor) * (pow(max(dot(E,R), 0.0), 64.0));  //Rohan's suggested code
+    float specular = pow(max(dot(E,R), 0.0), 64.0) * 0.8;
+    //vec3 specular = vec3(gl_FragColor) * (pow(max(dot(E,R), 0.0), 64.0));  //Rohan's suggested code
 
     vec3 diffuse = vec3(1.0,1.0,0.9)* vec3(gl_FragColor) * nDotL * 0.7; 
     vec3 ambient = vec3(gl_FragColor) * 0.25 * u_lightColor;
@@ -898,3 +898,6 @@ function sendTextToHTML(text, htmlID) {
   }
   htmlElm.innerHTML = text;
 }
+
+//Assignment notes to grader (new for Asgn4): I used my Asgn3 code as my starter code. Most code based off of Professor's walkthrough videos. ChatGPT sometimes helped me debug, get unstuck with my code, and learn new stuff for my code. I made comments in my code indicating where it was used. Also recieved help from various course tutors. I learned how to do the light color sliders from https://people.ucsc.edu/~jkohls/pa4/virtualWorld.js and my code was inspired by their implementation. I indicated in my code where I was inspired by this student's implementation, although I learned that the steps to making it work was largely similar to the code I had already done for things like my light position sliders and getting the camera to work with GLSL.
+//Notes to grader (from Asgn3): Most code based off of Professor's walkthrough videos. ChatGPT sometimes helped me debug, get unstuck with my code, and learn new stuff for my code. I made comments in my code indicating where it was used. Also recieved help from various course tutors. I sometimes referred to: https://people.ucsc.edu/~jbrowne2/asgn3/src/Camera.js in my Camera.js file to help me debug and correct my code(I mostly wrote it following the assignment instuctions).
